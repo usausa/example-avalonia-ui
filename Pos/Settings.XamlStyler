@@ -12,19 +12,13 @@
   "AttributeOrderingRuleGroups": [
     "xmlns",
     "xmlns:x",
-    "xmlns:maui",
     "xmlns:d",
     "xmlns:mc",
-    "xmlns:ios",
-    "xmlns:sd",
-    "xmlns:se",
-    "xmlns:si",
-    "xmlns:sm",
-    "xmlns:sn",
-    "xmlns:sr",
-    "xmlns:mcs",
-    "xmlns:mct",
-    "xmlns:cv",
+
+    "xmlns:s",
+    "xmlns:navigation",
+
+    "xmlns:app",
     "xmlns:local",
     "xmlns:dialog",
     "xmlns:core",
@@ -38,58 +32,74 @@
     "xmlns:markup",
     "xmlns:module",
     "xmlns:views",
+
     "xmlns:*",
+
     "mc:Ignorable, d:IsDataSource, d:LayoutOverrides, d:IsStaticText",
+
     "x:TypeArguments",
     "x:Class",
     "x:Type",
     "x:Key, Key",
     "x:Name, Name",
     "x:Uid, Uid",
-    "BasedOn, TargetType",
+
+    "s:Behavior.Key",
+    "s:ValidationProperty.*",
+
+    "TargetType, BasedOn",
+
     "Class",
-    "ClassId",
-    "Grid.Row, Grid.RowSpan, Grid.Column, Grid.ColumnSpan, Canvas.Left, Canvas.Top, Canvas.Right, Canvas.Bottom",
+
+    "x:DataType",
+    "s:DataContextResolver.*",
+    "DataContext",
+    "d:DataContext",
+
+    "Grid.Row, Grid.RowSpan, Grid.Column, Grid.ColumnSpan",
+    "Canvas.Left, Canvas.Top, Canvas.Right, Canvas.Bottom",
+    "AbsoluteLayout.LayoutBounds, AbsoluteLayout.LayoutFlags",
+
     "Style",
     "StyleClass",
-    "x:DataType",
-    "sr:*",
-    "DataContext",
-    "mcs:*",
-    "shell:ShellProperty.Title",
-    "shell:ShellProperty.Function1Text",
-    "shell:ShellProperty.Function2Text",
-    "shell:ShellProperty.Function3Text",
-    "shell:ShellProperty.Function4Text",
-    "shell:ShellProperty.Function1Enabled",
-    "shell:ShellProperty.Function2Enabled",
-    "shell:ShellProperty.Function3Enabled",
-    "shell:ShellProperty.Function4Enabled",
-    "Title",
-    "Icon",
+
     "RowDefinitions",
     "ColumnDefinitions",
     "Width, Height, MinWidth, MinHeight, MaxWidth, MaxHeight, WidthRequest, HeightRequest",
     "d:DesignWidth, d:DesignHeight",
+
     "CanResize",
     "WindowState",
+
+    "Title",
+    "Icon",
+
     "Orientation",
     "Margin, Padding",
-    "HorizontalTextAlignment, VerticalTextAlignment, HorizontalAlignment, VerticalAlignment, Panel.ZIndex",
+    "HorizontalTextAlignment, VerticalTextAlignment",
+    "HorizontalAlignment, VerticalAlignment",
+    "Panel.ZIndex",
+
     "Platform, PageSource, PageIndex, Offset, Color, TargetName, Property, Value, StartPoint, EndPoint",
+
     "Storyboard.*, From, To, Duration",
+
     "Command, CommandParameter",
+
     "IsEnabled",
     "IsVisible",
     "ItemsSource",
+
     "behaviors:*",
-    "input:*",
+    "s:*",
     "effects:*",
+
     "TextColor, BackgroundColor",
     "Text",
-    "Keyboard",
+
     "*",
     "*:*",
+
     "TrueValue",
     "FalseValue",
     "HandleEmptyString",
@@ -103,7 +113,7 @@
   "SpaceBeforeClosingSlash": true,
   "RootElementLineBreakRule": 0,
   "ReorderVSM": 1,
-  "ReorderGridChildren": true,
+  "ReorderGridChildren": false,
   "ReorderCanvasChildren": false,
   "ReorderSetters": 0,
   "FormatMarkupExtension": true,
