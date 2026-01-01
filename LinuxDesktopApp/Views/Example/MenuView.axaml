@@ -12,8 +12,15 @@
 
     <StackPanel>
         <Label Content="{Binding Message}" />
-        <Button Command="{Binding NavigateCommand}"
-                Content="Navigate" />
+
+        <WrapPanel>
+            <Button Command="{Binding NavigateToDashboardCommand}" Content="Dashboard" Margin="0,0,8,8" />
+            <Button Command="{Binding NavigateToTypographyCommand}" Content="Typography" Margin="0,0,8,8" />
+            <Button Command="{Binding NavigateToBarcodeCommand}" Content="Barcode" Margin="0,0,8,8" />
+            <Button Command="{Binding NavigateToCameraCommand}" Content="Camera" Margin="0,0,8,8" />
+            <Button Command="{Binding NavigateToPrinterCommand}" Content="Printer" Margin="0,0,8,8" />
+        </WrapPanel>
+
     </StackPanel>
 
 </UserControl>

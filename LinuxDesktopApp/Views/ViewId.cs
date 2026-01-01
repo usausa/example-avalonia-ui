@@ -3,5 +3,10 @@ namespace LinuxDesktopApp.Views;
 public enum ViewId
 {
     Menu,
-    Sub
+
+    Dashboard,
+    Typography,
+    Barcode,
+    Camera,
+    Printer
 }

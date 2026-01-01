@@ -1,15 +1,17 @@
 namespace LinuxDesktopApp.Views.Example;
 
-public sealed partial class SubViewModel : AppViewModelBase
+using LinuxDesktopApp.Views;
+
+public sealed partial class CameraViewModel : AppViewModelBase
 {
     [ObservableProperty]
     public partial string Message { get; set; }
 
     public ICommand NavigateCommand { get; }
 
-    public SubViewModel()
+    public CameraViewModel()
     {
-        Message = "Hello from SubViewModel!";
+        Message = "Hello from CameraViewModel!";
         NavigateCommand = MakeDelegateCommand(() =>
         {
             Navigator.Forward(ViewId.Menu);

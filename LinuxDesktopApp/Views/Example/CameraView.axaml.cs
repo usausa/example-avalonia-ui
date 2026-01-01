@@ -4,10 +4,12 @@ using Avalonia.Controls;
 
 using Smart.Navigation.Attributes;
 
-[View(ViewId.Sub)]
-public partial class SubView : UserControl
+using LinuxDesktopApp.Views;
+
+[View(ViewId.Camera)]
+public partial class CameraView : UserControl
 {
-    public SubView()
+    public CameraView()
     {
         InitializeComponent();
     }
