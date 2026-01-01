@@ -1,4 +1,4 @@
-namespace LinuxDesktopApp.Views.Main;
+namespace LinuxDesktopApp.Views.Example;
 
 using Avalonia.Controls;
 

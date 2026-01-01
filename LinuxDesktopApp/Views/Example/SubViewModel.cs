@@ -1,4 +1,4 @@
-namespace LinuxDesktopApp.Views.Main;
+namespace LinuxDesktopApp.Views.Example;
 
 public sealed partial class SubViewModel : AppViewModelBase
 {

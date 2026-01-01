@@ -3,11 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="http://smart/avalonia"
-             xmlns:local="clr-namespace:LinuxDesktopApp.Views.Main"
+             xmlns:local="clr-namespace:LinuxDesktopApp.Views.Example"
              mc:Ignorable="d"
-             x:Class="LinuxDesktopApp.Views.Main.SubView"
-             x:DataType="local:SubViewModel"
-             s:DataContextResolver.Type="local:SubViewModel"
+             x:Class="LinuxDesktopApp.Views.Example.MenuView"
+             x:DataType="local:MenuViewModel"
+             s:DataContextResolver.Type="local:MenuViewModel"
              d:DesignWidth="1920" d:DesignHeight="1080">
 
     <StackPanel>
