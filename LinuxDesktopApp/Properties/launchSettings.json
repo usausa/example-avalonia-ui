@@ -8,7 +8,6 @@
     },
     "WSL": {
       "commandName": "WSL2",
-      "workingDirectory": "~/AvaloniaApp",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       },
