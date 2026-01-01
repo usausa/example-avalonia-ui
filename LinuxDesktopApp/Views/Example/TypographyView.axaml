@@ -10,10 +10,77 @@
              s:DataContextResolver.Type="local:TypographyViewModel"
              d:DesignWidth="1920" d:DesignHeight="1080">
 
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+    </UserControl.Styles>
+
     <StackPanel>
         <Label Content="{Binding Message}" />
         <Button Command="{Binding NavigateCommand}"
                 Content="Back to Menu" />
+
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+              ColumnDefinitions="Auto, *"
+          Margin="10">
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="フォント表示サンプル" FontWeight="Bold" FontSize="20" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="フォント名" FontWeight="SemiBold" TextAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="表示サンプル (テキストの内容)" FontWeight="SemiBold" TextAlignment="Center"/>
+
+        <Rectangle Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Height="1" Fill="LightGray" Margin="0,5"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="sans-serif" Margin="5"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。sans-serif。" FontFamily="sans-serif" Margin="5"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="serif" Margin="5"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。serif。" FontFamily="serif" Margin="5"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="monospace" Margin="5"/>
+        <TextBlock Grid.Row="5" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。monospace。" FontFamily="monospace" Margin="5"/>
+
+        <Rectangle Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0" Height="1" Fill="LightGray" Margin="0,5"/>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="IPAMincho" Margin="5"/>
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。文字の美しさ、可読性が追求されています。私は日本語の明朝体です。IPAの明朝体。"
+                   FontFamily="IPAMincho" Margin="5"/>
+
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="IPAGothic" Margin="5"/>
+        <TextBlock Grid.Row="8" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。文字の美しさ、可読性が追求されています。私は日本語のゴシック体です。IPAのゴシック体。"
+                   FontFamily="IPAGothic" Margin="5"/>
+
+        <TextBlock Grid.Row="9" Grid.Column="0" Text="IPAexMincho" Margin="5"/>
+        <TextBlock Grid.Row="9" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。IPAexは、和文と欧文の文字幅の統一を考慮した明朝体です。"
+                   FontFamily="IPAexMincho" Margin="5"/>
+
+        <TextBlock Grid.Row="10" Grid.Column="0" Text="IPAexGothic" Margin="5"/>
+        <TextBlock Grid.Row="10" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。IPAexは、和文と欧文の文字幅の統一を考慮したゴシック体です。"
+                   FontFamily="IPAexGothic" Margin="5"/>
+
+        <Rectangle Grid.Row="11" Grid.ColumnSpan="2" Grid.Column="0" Height="1" Fill="LightGray" Margin="0,5"/>
+
+        <TextBlock Grid.Row="12" Grid.Column="0" Text="Noto Sans CJK JP" Margin="5"/>
+        <TextBlock Grid.Row="12" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。GoogleとAdobeが共同開発した、非常に包括的なゴシック体です。私はNoto Sans CJK JPです。"
+                   FontFamily="Noto Sans CJK JP" Margin="5"/>
+
+        <TextBlock Grid.Row="13" Grid.Column="0" Text="Noto Serif CJK JP" Margin="5"/>
+        <TextBlock Grid.Row="13" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。私はNoto Sansのセリフ（明朝）版です。明朝体のエレガントさを持っています。"
+                   FontFamily="Noto Serif CJK JP" Margin="5"/>
+
+        <TextBlock Grid.Row="14" Grid.Column="0" Text="VL Gothic" Margin="5"/>
+        <TextBlock Grid.Row="14" Grid.Column="1" Text="ABCDE 12345 あいうえお 甲乙丙。視認性が高く、オープンソースで人気のあるゴシック体です。私はVL Gothicです。"
+                   FontFamily="VL Gothic" Margin="5"/>
+
+        <StackPanel Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,15,0,0">
+            <TextBlock Text="絵文字テスト：" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="😄🍕🚀🍣💻 (Noto Color Emojiによる表示)"
+                       FontSize="24"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+    </Grid>
     </StackPanel>
 
 </UserControl>
