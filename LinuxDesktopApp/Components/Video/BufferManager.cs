@@ -1,0 +1,141 @@
+namespace LinuxDesktopApp.Components.Video;
+
+public sealed class BufferManager : IDisposable
+{
+    public sealed class BufferSlot
+    {
+        private readonly BufferManager manager;
+
+        private readonly int slotNo;
+
+        private readonly byte[] buffer;
+
+        private readonly int bufferSize;
+
+        public Span<byte> Buffer => buffer.AsSpan(0, bufferSize);
+
+#pragma warning disable CA1002
+        public List<FaceBox> FaceBoxes { get; } = new();
+#pragma warning restore CA1002
+
+        public Lock Lock { get; }
+
+        public int SlotNo => slotNo;
+
+        public int Version { get; private set; }
+
+        public DateTime LastUpdated { get; private set; }
+
+        public BufferSlot(BufferManager manager, int slotNo, byte[] buffer, int bufferSize)
+        {
+            this.manager = manager;
+            this.slotNo = slotNo;
+
+            buffer.AsSpan().Clear();
+            this.buffer = buffer;
+            this.bufferSize = bufferSize;
+
+            Lock = new Lock();
+            Version = 0;
+            LastUpdated = DateTime.MinValue;
+        }
+
+        public void MarkUpdated()
+        {
+            Version++;
+            LastUpdated = DateTime.Now;
+
+            manager.NotifyUpdate(slotNo);
+        }
+    }
+
+    private readonly BufferSlot[] slots;
+
+    private readonly Lock indexLock = new();
+
+    private int nextIndex;
+    private int lastUpdatedIndex = -1;
+
+    private byte[][] buffers;
+
+    private bool disposed;
+
+    public int SlotCount => slots.Length;
+
+    public int Width { get; }
+
+    public int Height { get; }
+
+    public int Depth { get; }
+
+    public int BufferSize { get; }
+
+    public BufferManager(int slotCount, int width, int height, int depth)
+    {
+        slots = new BufferSlot[slotCount];
+        buffers = new byte[slotCount][];
+
+        Width = width;
+        Height = height;
+        Depth = depth;
+        BufferSize = width * height * depth;
+
+        for (var i = 0; i < slotCount; i++)
+        {
+            var buffer = ArrayPool<byte>.Shared.Rent(BufferSize);
+            buffers[i] = buffer;
+            slots[i] = new BufferSlot(this, i, buffer, BufferSize);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        foreach (var buffer in buffers)
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
+        buffers = [];
+
+        disposed = true;
+    }
+
+    public BufferSlot GetSlot(int index)
+    {
+        if (index < 0 || index >= slots.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index));
+        }
+        return slots[index];
+    }
+
+    public BufferSlot NextSlot()
+    {
+        lock (indexLock)
+        {
+            var index = nextIndex;
+            nextIndex = (nextIndex + 1) % slots.Length;
+            return slots[index];
+        }
+    }
+
+    public BufferSlot? LastUpdateSlot()
+    {
+        lock (indexLock)
+        {
+            return lastUpdatedIndex < 0 ? null : slots[lastUpdatedIndex];
+        }
+    }
+
+    private void NotifyUpdate(int slotNo)
+    {
+        lock (indexLock)
+        {
+            lastUpdatedIndex = slotNo;
+        }
+    }
+}

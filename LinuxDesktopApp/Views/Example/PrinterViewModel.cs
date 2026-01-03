@@ -4,11 +4,19 @@ using LinuxDesktopApp.Views;
 
 public sealed partial class PrinterViewModel : AppViewModelBase
 {
-    [ObservableProperty]
-    public partial string Message { get; set; }
+    public IObserveCommand PrintTextCommand { get; }
+
+    public IObserveCommand PrintImageCommand { get; }
 
     public PrinterViewModel()
     {
-        Message = "Hello from PrinterViewModel!";
+        PrintTextCommand = MakeDelegateCommand(() =>
+        {
+            // TODO
+        });
+        PrintImageCommand = MakeDelegateCommand(() =>
+        {
+            // TODO
+        });
     }
 }

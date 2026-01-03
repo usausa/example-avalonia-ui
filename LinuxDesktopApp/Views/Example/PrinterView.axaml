@@ -11,8 +11,17 @@
              d:DesignWidth="1920" d:DesignHeight="960"
              Height="960">
 
-    <StackPanel>
-        <Label Content="{Binding Message}" />
-    </StackPanel>
+    <Grid RowDefinitions="60,*">
+        <WrapPanel Grid.Row="0" Height="60">
+            <Button Command="{Binding PrintTextCommand}"
+                    Content="Text"
+                    Width="240"
+                    Height="60" />
+            <Button Command="{Binding PrintImageCommand}"
+                    Content="Image"
+                    Width="240"
+                    Height="60" />
+        </WrapPanel>
+    </Grid>
 
 </UserControl>

@@ -12,6 +12,7 @@ using Smart.Avalonia;
 using Smart.Resolver;
 
 using LinuxDesktopApp.Settings;
+using LinuxDesktopApp.Services;
 using LinuxDesktopApp.Views;
 
 public static partial class ApplicationExtensions
@@ -74,7 +75,10 @@ public static partial class ApplicationExtensions
         });
 
         // Settings
-        config.BindConfig<Setting>(configuration.GetSection("Setting"));
+        config.BindConfig<NavigationSetting>(configuration.GetSection("Setting"));
+
+        // Services
+        config.BindSingleton<DataService>();
 
         // Window
         config.BindSingleton<MainWindow>();

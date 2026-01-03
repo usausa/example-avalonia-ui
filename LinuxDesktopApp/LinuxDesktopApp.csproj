@@ -9,6 +9,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
@@ -45,6 +46,7 @@
     <PackageReference Include="LinuxDotNet.SystemInfo" Version="1.2.0" />
     <PackageReference Include="LinuxDotNet.Video4Linux2" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
@@ -65,6 +67,12 @@
     <PackageReference Include="Usa.Smart.Resolver.Extensions.Configuration" Version="2.7.1" />
     <PackageReference Include="Usa.Smart.Resolver.Extensions.DependencyInjection" Version="2.7.1" />
     <PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="version-RFB-320.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
