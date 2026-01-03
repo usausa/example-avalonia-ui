@@ -8,7 +8,8 @@
              x:Class="LinuxDesktopApp.Views.Example.TypographyView"
              x:DataType="local:TypographyViewModel"
              s:DataContextResolver.Type="local:TypographyViewModel"
-             d:DesignWidth="1920" d:DesignHeight="1080">
+             d:DesignWidth="1920" d:DesignHeight="960"
+             Height="960">
 
     <UserControl.Styles>
         <Style Selector="TextBlock">
@@ -18,8 +19,6 @@
 
     <StackPanel>
         <Label Content="{Binding Message}" />
-        <Button Command="{Binding NavigateCommand}"
-                Content="Back to Menu" />
 
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ColumnDefinitions="Auto,32,*" Margin="10" RowSpacing="5">

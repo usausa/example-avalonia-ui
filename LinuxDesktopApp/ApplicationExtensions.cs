@@ -110,7 +110,7 @@ public static partial class ApplicationExtensions
 
         // Navigate to view
         var navigator = host.Services.GetRequiredService<Navigator>();
-        await navigator.ForwardAsync(ViewId.Menu).ConfigureAwait(false);
+        await navigator.ForwardAsync(ViewId.Dashboard).ConfigureAwait(false);
     }
 
     public static async ValueTask ExitApplicationAsync(this IHost host)

@@ -5,6 +5,7 @@
         xmlns:s="http://smart/avalonia"
         xmlns:navigation="http://smart/navigation"
         xmlns:app="using:LinuxDesktopApp"
+        xmlns:markup="clr-namespace:LinuxDesktopApp.Markup"
         mc:Ignorable="d"
         x:Class="LinuxDesktopApp.MainWindow"
         x:DataType="app:MainWindowViewModel"
@@ -15,6 +16,36 @@
         Title="LinuxDesktopApp"
         Icon="/Assets/avalonia-logo.ico">
 
-    <Canvas navigation:NavigationContainer.Navigator="{Binding Navigator}" />
+    <Grid RowDefinitions="60,*,60">
+        <WrapPanel Grid.Row="0" Height="60">
+            <Button Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Dashboard}"
+                    Content="Dashboard"
+                    Width="240"
+                    Height="60" />
+            <Button Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Typography}"
+                    Content="Typography"
+                    Width="240"
+                    Height="60" />
+            <Button Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Barcode}"
+                    Content="Barcode"
+                    Width="240"
+                    Height="60" />
+            <Button Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Camera}"
+                    Content="Camera"
+                    Width="240"
+                    Height="60" />
+            <Button Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Printer}"
+                    Content="Printer"
+                    Width="240"
+                    Height="60" />
+        </WrapPanel>
+
+        <Canvas Grid.Row="1" navigation:NavigationContainer.Navigator="{Binding Navigator}" />
+    </Grid>
 
 </Window>
