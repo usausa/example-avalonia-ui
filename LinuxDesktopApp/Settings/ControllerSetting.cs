@@ -1,6 +1,6 @@
 namespace LinuxDesktopApp.Settings;
 
-public class NavigationSetting
+public sealed class ControllerSetting
 {
     public bool UseJoystick { get; set; }
 }

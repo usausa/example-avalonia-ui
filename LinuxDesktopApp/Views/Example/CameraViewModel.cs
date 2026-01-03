@@ -106,6 +106,26 @@ public sealed partial class CameraViewModel : AppViewModelBase
         base.Dispose(disposing);
     }
 
+    protected override Task OnNotifyTrigger1()
+    {
+        if (!capture.IsCapturing)
+        {
+            StartCapture();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    protected override Task OnNotifyTrigger2()
+    {
+        if (capture.IsCapturing)
+        {
+            StopCapture();
+        }
+
+        return Task.CompletedTask;
+    }
+
     private void StartCapture()
     {
         if (!capture.Open(cameraSetting.Width, cameraSetting.Height))
