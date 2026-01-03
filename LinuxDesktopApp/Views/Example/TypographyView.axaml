@@ -18,8 +18,6 @@
     </UserControl.Styles>
 
     <StackPanel>
-        <Label Content="{Binding Message}" />
-
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ColumnDefinitions="Auto,32,*" Margin="10" RowSpacing="5">
 

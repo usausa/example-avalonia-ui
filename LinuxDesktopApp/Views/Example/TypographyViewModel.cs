@@ -2,13 +2,6 @@ namespace LinuxDesktopApp.Views.Example;
 
 using LinuxDesktopApp.Views;
 
-public sealed partial class TypographyViewModel : AppViewModelBase
+public sealed class TypographyViewModel : AppViewModelBase
 {
-    [ObservableProperty]
-    public partial string Message { get; set; }
-
-    public TypographyViewModel()
-    {
-        Message = "Hello from TypographyViewModel!";
-    }
 }

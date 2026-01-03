@@ -16,11 +16,17 @@
             <Button Command="{Binding PrintTextCommand}"
                     Content="Text"
                     Width="240"
-                    Height="60" />
+                    Height="60"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="24" />
             <Button Command="{Binding PrintImageCommand}"
                     Content="Image"
                     Width="240"
-                    Height="60" />
+                    Height="60"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="24" />
         </WrapPanel>
     </Grid>
 

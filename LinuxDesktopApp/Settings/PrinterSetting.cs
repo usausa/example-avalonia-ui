@@ -2,7 +2,7 @@ namespace LinuxDesktopApp.Settings;
 
 public sealed class PrinterSetting
 {
-    public string TextPrinter { get; set; } = default!;
+    public string LinePrinterDevice { get; set; } = default!;
 
-    public string ImagePrinter { get; set; } = default!;
+    public string ImagePrinterDevice { get; set; } = default!;
 }

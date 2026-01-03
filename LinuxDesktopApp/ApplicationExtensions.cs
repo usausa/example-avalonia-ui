@@ -78,6 +78,7 @@ public static partial class ApplicationExtensions
         config.BindConfig<ControllerSetting>(configuration.GetSection("Controller"));
         config.BindConfig<CameraSetting>(configuration.GetSection("Camera"));
         config.BindConfig<DetectSetting>(configuration.GetSection("Detect"));
+        config.BindConfig<PrinterSetting>(configuration.GetSection("Printer"));
 
         // Services
         config.BindSingleton<DataService>();

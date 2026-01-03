@@ -1,7 +1,6 @@
 namespace LinuxDesktopApp.Views.Example;
 
-using LinuxDotNet.Cups;
-
+using LinuxDesktopApp.Components.Printer;
 using LinuxDesktopApp.Settings;
 using LinuxDesktopApp.Views;
 
@@ -13,17 +12,15 @@ public sealed class PrinterViewModel : AppViewModelBase
 
     public PrinterViewModel(PrinterSetting printerSetting)
     {
+        var linePrinter = new LinePrinter(printerSetting.LinePrinterDevice);
+
         PrintTextCommand = MakeDelegateCommand(() =>
         {
             using var ms = new MemoryStream();
-            ms.Write("TEST1234567890\n"u8);
+            ms.Write("TEST-1234567890\n"u8);
             ms.Seek(0, SeekOrigin.Begin);
 
-            CupsPrinter.PrintStream(ms, new PrintOptions
-            {
-                Printer = printerSetting.TextPrinter,
-                MediaType = "text/plain"
-            });
+            linePrinter.Print(ms);
         });
         PrintImageCommand = MakeDelegateCommand(() =>
         {

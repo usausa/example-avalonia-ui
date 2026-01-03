@@ -3,7 +3,7 @@ namespace LinuxDesktopApp.Components.Video;
 using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
-internal static class ImageHelper
+public static class ImageHelper
 {
     public static unsafe void ConvertYUYV2RGBA(ReadOnlySpan<byte> yuyv, Span<byte> rgba)
     {
