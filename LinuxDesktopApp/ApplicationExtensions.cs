@@ -55,6 +55,11 @@ public static partial class ApplicationExtensions
         // Messenger
         config.BindSingleton<IReactiveMessenger>(ReactiveMessenger.Default);
 
+        // Setting
+        config.BindConfig<NavigationSetting>(configuration.GetSection("Navigation"));
+        config.BindConfig<CameraSetting>(configuration.GetSection("Camera"));
+        config.BindConfig<DetectSetting>(configuration.GetSection("Detect"));
+
         // Navigation
         config.BindSingleton<Navigator>(resolver =>
         {
