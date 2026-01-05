@@ -16,48 +16,28 @@
         Title="LinuxDesktopApp"
         Icon="/Assets/avalonia-logo.ico">
 
-    <Grid RowDefinitions="60,*">
-        <WrapPanel Grid.Row="0" Height="60">
-            <Button Command="{Binding ForwardCommand}"
+    <Grid RowDefinitions="Auto,*">
+        <WrapPanel Grid.Row="0">
+            <Button Classes="toolbar"
+                    Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Dashboard}"
-                    Content="Dashboard"
-                    Width="240"
-                    Height="60"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="24" />
-            <Button Command="{Binding ForwardCommand}"
+                    Content="Dashboard" />
+            <Button Classes="toolbar"
+                    Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Typography}"
-                    Content="Typography"
-                    Width="240"
-                    Height="60"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="24" />
-            <Button Command="{Binding ForwardCommand}"
+                    Content="Typography" />
+            <Button Classes="toolbar"
+                    Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Barcode}"
-                    Content="Barcode"
-                    Width="240"
-                    Height="60"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="24" />
-            <Button Command="{Binding ForwardCommand}"
+                    Content="Barcode" />
+            <Button Classes="toolbar"
+                    Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Camera}"
-                    Content="Camera"
-                    Width="240"
-                    Height="60"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="24" />
-            <Button Command="{Binding ForwardCommand}"
+                    Content="Camera" />
+            <Button Classes="toolbar"
+                    Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Printer}"
-                    Content="Printer"
-                    Width="240"
-                    Height="60"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="24" />
+                    Content="Printer" />
         </WrapPanel>
 
         <Canvas Grid.Row="1" navigation:NavigationContainer.Navigator="{Binding Navigator}" />

@@ -3,17 +3,18 @@
              x:Class="LinuxDesktopApp.App"
              RequestedThemeVariant="Default">
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
-
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <MergeResourceInclude Source="Assets/Styles/Colors.axaml" />
-                <MergeResourceInclude Source="Assets/Styles/Styles.axaml" />
+                <ResourceInclude Source="Assets/Styles/Constants.axaml" />
+                <ResourceInclude Source="Assets/Styles/Colors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="Assets/Styles/Styles.axaml"></StyleInclude>
+    </Application.Styles>
 
 </Application>
