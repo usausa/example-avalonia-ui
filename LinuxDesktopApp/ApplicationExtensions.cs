@@ -76,6 +76,7 @@ public static partial class ApplicationExtensions
 
         // Setting
         config.BindConfig<ControllerSetting>(configuration.GetSection("Controller"));
+        config.BindConfig<BarcodeSetting>(configuration.GetSection("Barcode"));
         config.BindConfig<CameraSetting>(configuration.GetSection("Camera"));
         config.BindConfig<DetectSetting>(configuration.GetSection("Detect"));
         config.BindConfig<PrinterSetting>(configuration.GetSection("Printer"));

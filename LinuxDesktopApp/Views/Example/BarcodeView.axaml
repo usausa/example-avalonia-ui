@@ -12,7 +12,11 @@
              Height="960">
 
     <StackPanel>
-        <Label Content="{Binding Message}" />
+        <Label Content="{Binding Barcode}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               FontSize="72"
+               FontWeight="Bold"/>
     </StackPanel>
 
 </UserControl>
