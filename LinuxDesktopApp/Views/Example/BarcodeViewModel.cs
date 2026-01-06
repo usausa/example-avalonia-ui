@@ -14,8 +14,14 @@ public sealed partial class BarcodeViewModel : AppViewModelBase
 
     private readonly BarcodeReader? barcodeReader;
 
+    private readonly QrReader? qrReader;
+
     [ObservableProperty]
     public partial string Barcode { get; set; } = default!;
+
+    public IObserveCommand ResumeCommand { get; }
+
+    public IObserveCommand PauseCommand { get; }
 
     public BarcodeViewModel(
         IDispatcher dispatcher,
@@ -31,6 +37,22 @@ public sealed partial class BarcodeViewModel : AppViewModelBase
             barcodeReader.BarcodeScanned += OnBarcodeScanned;
             barcodeReader.Start();
         }
+
+        if (!String.IsNullOrEmpty(barcodeSetting.Port) && File.Exists(barcodeSetting.Port))
+        {
+            qrReader = new QrReader(barcodeSetting.Port);
+            qrReader.QrScanned += OnBarcodeScanned;
+            qrReader.Open();
+        }
+
+        ResumeCommand = MakeDelegateCommand(() =>
+        {
+            qrReader?.Resume();
+        }, () => qrReader is not null);
+        PauseCommand = MakeDelegateCommand(() =>
+        {
+            qrReader?.Pause();
+        }, () => qrReader is not null);
     }
 
     private void OnBarcodeScanned(string code)
@@ -47,6 +69,10 @@ public sealed partial class BarcodeViewModel : AppViewModelBase
         {
             barcodeReader?.Stop();
             barcodeReader?.Dispose();
+
+            qrReader?.Resume();
+            qrReader?.Close();
+            qrReader?.Dispose();
         }
 
         base.Dispose(disposing);

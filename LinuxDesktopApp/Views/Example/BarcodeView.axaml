@@ -8,15 +8,39 @@
              x:Class="LinuxDesktopApp.Views.Example.BarcodeView"
              x:DataType="local:BarcodeViewModel"
              s:DataContextResolver.Type="local:BarcodeViewModel"
-             d:DesignWidth="1920" d:DesignHeight="960"
-             Height="960">
+             d:DesignWidth="1920" d:DesignHeight="1020"
+             Height="1020">
 
-    <StackPanel>
-        <Label Content="{Binding Barcode}"
+    <Grid RowDefinitions="*,Auto">
+
+        <Label Grid.Row="0"
+               Content="{Binding Barcode}"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                FontSize="72"
                FontWeight="Bold"/>
-    </StackPanel>
+
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*"
+              Height="60">
+            <Button Grid.Column="0"
+                    Content="Resume"
+                    Command="{Binding ResumeCommand}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="24" />
+            <Button Grid.Column="1"
+                    Content="Pause"
+                    Command="{Binding PauseCommand}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="24" />
+        </Grid>
+
+    </Grid>
 
 </UserControl>
