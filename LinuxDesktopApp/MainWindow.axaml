@@ -38,6 +38,15 @@
                     Command="{Binding ForwardCommand}"
                     CommandParameter="{markup:ViewId Printer}"
                     Content="Printer" />
+            <Button Classes="toolbar"
+                    IsEnabled="False"
+                    Content="Controller" />
+            <Button Classes="toolbar"
+                    IsEnabled="False"
+                    Content="NFC" />
+            <Button Classes="toolbar"
+                    IsEnabled="False"
+                    Content="" />
         </WrapPanel>
 
         <Canvas Grid.Row="1" navigation:NavigationContainer.Navigator="{Binding Navigator}" />
