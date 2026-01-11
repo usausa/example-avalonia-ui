@@ -12,7 +12,7 @@
         s:DataContextResolver.Type="app:MainWindowViewModel"
         Width="1920" Height="1080"
         d:DesignWidth="1920" d:DesignHeight="1080"
-        CanResize="True"
+        CanResize="False"
         Title="LinuxDesktopApp"
         Icon="/Assets/avalonia-logo.ico">
 
@@ -47,7 +47,6 @@
                     CommandParameter="{markup:ViewId Nfc}"
                     Content="NFC" />
             <Button Classes="toolbar"
-                    IsEnabled="False"
                     Content="" />
         </WrapPanel>
 
