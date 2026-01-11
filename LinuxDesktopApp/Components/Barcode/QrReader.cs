@@ -2,6 +2,8 @@ namespace LinuxDesktopApp.Components.Barcode;
 
 using System.IO.Ports;
 
+using Mofucat.SerialIO;
+
 internal sealed class QrReader : IDisposable
 {
     public event Action<string>? QrScanned;
@@ -10,6 +12,8 @@ internal sealed class QrReader : IDisposable
     private static readonly byte[] PauseCommand = "Z\r"u8.ToArray();
 
     private readonly SerialPort port;
+
+    private readonly SerialLineReader reader;
 
     public bool IsOpen => port.IsOpen;
 
@@ -27,16 +31,19 @@ internal sealed class QrReader : IDisposable
             WriteTimeout = 1000
         };
 
-        port.DataReceived += (sender, _) =>
-        {
-            var sp = (SerialPort)sender;
-            var line = sp.ReadExisting();
-            QrScanned?.Invoke(line);
-        };
+        reader = new SerialLineReader(port, delimiter: [(byte)'\r']);
+        reader.LineReceived += OnLineReceived;
+    }
+
+    private void OnLineReceived(object? sender, ReadOnlySpan<byte> bytes)
+    {
+        QrScanned?.Invoke(Encoding.UTF8.GetString(bytes));
     }
 
     public void Dispose()
     {
+        reader.LineReceived -= OnLineReceived;
+        reader.Dispose();
         port.Dispose();
     }
 
