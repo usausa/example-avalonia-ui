@@ -60,6 +60,9 @@ public sealed partial class CameraViewModel : AppViewModelBase
     [ObservableProperty]
     public partial float Gc2PerSec { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsStarted { get; set; }
+
     public IObserveCommand StartCommand { get; }
 
     public IObserveCommand StopCommand { get; }
@@ -84,8 +87,8 @@ public sealed partial class CameraViewModel : AppViewModelBase
 
         faceDetector = new FaceDetector(detectSetting.Model, detectSetting.Parallel, detectSetting.IntraOpNumThreads, detectSetting.InterOpNumThreads);
 
-        StartCommand = MakeDelegateCommand(StartCapture, () => !capture.IsCapturing);
-        StopCommand = MakeDelegateCommand(StopCapture, () => capture.IsCapturing);
+        StartCommand = MakeDelegateCommand(StartCapture, () => !IsStarted);
+        StopCommand = MakeDelegateCommand(StopCapture, () => IsStarted);
     }
 
     protected override void Dispose(bool disposing)
@@ -106,24 +109,18 @@ public sealed partial class CameraViewModel : AppViewModelBase
         base.Dispose(disposing);
     }
 
-    protected override Task OnNotifyTrigger1()
+    protected override Task OnNotifyStart()
     {
-        if (!capture.IsCapturing)
+        if (IsStarted)
+        {
+            StopCapture();
+        }
+        else
         {
             StartCapture();
         }
 
-        return Task.CompletedTask;
-    }
-
-    protected override Task OnNotifyTrigger2()
-    {
-        if (capture.IsCapturing)
-        {
-            StopCapture();
-        }
-
-        return Task.CompletedTask;
+        return base.OnNotifyStart();
     }
 
     private void StartCapture()
@@ -150,6 +147,8 @@ public sealed partial class CameraViewModel : AppViewModelBase
         lastStatusAt = DateTime.Now;
 
         statusTimer.Start();
+
+        IsStarted = capture.IsCapturing;
     }
 
     private void StopCapture()
@@ -158,6 +157,8 @@ public sealed partial class CameraViewModel : AppViewModelBase
 
         capture.StopCapture();
         capture.Close();
+
+        IsStarted = capture.IsCapturing;
     }
 
     private void CaptureOnFrameCaptured(FrameBuffer frame)

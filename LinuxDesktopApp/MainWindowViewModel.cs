@@ -65,23 +65,14 @@ public class MainWindowViewModel : ExtendViewModelBase
         {
             switch (key)
             {
-                case 0:
-                    NotifyTrigger(ShellEvent.Trigger1);
-                    break;
-                case 1:
-                    NotifyTrigger(ShellEvent.Trigger2);
-                    break;
-                case 2:
-                    NotifyTrigger(ShellEvent.Trigger3);
-                    break;
-                case 3:
-                    NotifyTrigger(ShellEvent.Trigger4);
-                    break;
                 case 4:
                     SwitchView(false);
                     break;
                 case 5:
                     SwitchView(true);
+                    break;
+                case 7:
+                    NotifyTrigger(ShellEvent.Start);
                     break;
             }
         }
