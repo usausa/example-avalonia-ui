@@ -6,5 +6,7 @@ public enum ViewId
     Typography,
     Barcode,
     Camera,
-    Printer
+    Printer,
+    Controller,
+    Nfc,
 }

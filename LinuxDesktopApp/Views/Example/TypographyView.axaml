@@ -72,10 +72,10 @@
         <Rectangle Grid.Row="15" Grid.ColumnSpan="3" Grid.Column="0" Height="1" Fill="LightGray" Margin="0,5"/>
 
         <TextBlock Grid.Row="16" Grid.Column="0" Text="851Gkktt"/>
-        <TextBlock Grid.Row="16" Grid.Column="2" Text="ABCDE 12345 あいうえお 甲乙丙" FontFamily="avares://LinuxDesktopApp/Assets/Fonts/851Gkktt_005.ttf#851ゴチカクット"/>
+        <TextBlock Grid.Row="16" Grid.Column="2" Text="ABCDE 12345 あいうえお 甲乙丙" FontFamily="{StaticResource Gkktt}"/>
 
         <TextBlock Grid.Row="17" Grid.Column="0" Text="DSEG7Classic"/>
-        <TextBlock Grid.Row="17" Grid.Column="2" Text="ABCDE 12345 あいうえお 甲乙丙" FontFamily="avares://LinuxDesktopApp/Assets/Fonts/DSEG7Classic-Regular.ttf#DSEG7 Classic"/>
+        <TextBlock Grid.Row="17" Grid.Column="2" Text="ABCDE 12345 あいうえお 甲乙丙" FontFamily="{StaticResource DSEG7}"/>
 
         <Rectangle Grid.Row="18" Grid.ColumnSpan="3" Grid.Column="0" Height="1" Fill="LightGray" Margin="0,5"/>
 

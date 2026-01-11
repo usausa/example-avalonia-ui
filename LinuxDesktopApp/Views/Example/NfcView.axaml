@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="http://smart/avalonia"
+             xmlns:local="clr-namespace:LinuxDesktopApp.Views.Example"
+             mc:Ignorable="d"
+             x:Class="LinuxDesktopApp.Views.Example.NfcView"
+             x:DataType="local:NfcViewModel"
+             s:DataContextResolver.Type="local:NfcViewModel"
+             d:DesignWidth="1920" d:DesignHeight="960"
+             Height="960">
+
+    <StackPanel>
+    </StackPanel>
+
+</UserControl>

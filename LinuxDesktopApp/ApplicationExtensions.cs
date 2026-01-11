@@ -15,6 +15,8 @@ using LinuxDesktopApp.Settings;
 using LinuxDesktopApp.Services;
 using LinuxDesktopApp.Views;
 
+using LinuxDotNet.GameInput;
+
 public static partial class ApplicationExtensions
 {
     //--------------------------------------------------------------------------------
@@ -83,6 +85,9 @@ public static partial class ApplicationExtensions
 
         // Services
         config.BindSingleton<DataService>();
+
+        // Components
+        config.BindSingleton(_ => new GameController());
 
         // Window
         config.BindSingleton<MainWindow>();

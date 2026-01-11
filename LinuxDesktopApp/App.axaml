@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Assets/Styles/Constants.axaml" />
                 <ResourceInclude Source="Assets/Styles/Colors.axaml" />
+                <ResourceInclude Source="Assets/Styles/Fonts.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

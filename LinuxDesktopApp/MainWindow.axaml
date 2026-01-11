@@ -39,10 +39,12 @@
                     CommandParameter="{markup:ViewId Printer}"
                     Content="Printer" />
             <Button Classes="toolbar"
-                    IsEnabled="False"
+                    Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Controller}"
                     Content="Controller" />
             <Button Classes="toolbar"
-                    IsEnabled="False"
+                    Command="{Binding ForwardCommand}"
+                    CommandParameter="{markup:ViewId Nfc}"
                     Content="NFC" />
             <Button Classes="toolbar"
                     IsEnabled="False"

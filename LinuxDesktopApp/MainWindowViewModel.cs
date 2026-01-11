@@ -17,12 +17,14 @@ public class MainWindowViewModel : ExtendViewModelBase
         ViewId.Typography,
         ViewId.Barcode,
         ViewId.Camera,
-        ViewId.Printer
+        ViewId.Printer,
+        ViewId.Controller,
+        ViewId.Nfc
     ];
 
     private readonly IDispatcher dispatcher;
 
-    private readonly GameController controller = new();
+    private readonly GameController controller;
 
     public Navigator Navigator { get; set; }
 
@@ -31,13 +33,15 @@ public class MainWindowViewModel : ExtendViewModelBase
     public MainWindowViewModel(
         IDispatcher dispatcher,
         ControllerSetting controllerSetting,
-        Navigator navigator)
+        Navigator navigator,
+        GameController controller)
     {
         this.dispatcher = dispatcher;
         Navigator = navigator;
 
         ForwardCommand = MakeDelegateCommand<ViewId>(x => Navigator.Forward(x));
 
+        this.controller = controller;
         controller.ButtonChanged += ControllerOnButtonChanged;
         if (controllerSetting.UseJoystick)
         {
@@ -51,7 +55,7 @@ public class MainWindowViewModel : ExtendViewModelBase
 
         if (disposing)
         {
-            controller.Dispose();
+            controller.ButtonChanged -= ControllerOnButtonChanged;
         }
     }
 

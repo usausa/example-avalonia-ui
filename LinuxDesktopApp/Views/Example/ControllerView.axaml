@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="http://smart/avalonia"
+             xmlns:local="clr-namespace:LinuxDesktopApp.Views.Example"
+             xmlns:controls="clr-namespace:LinuxDesktopApp.Controls"
+             mc:Ignorable="d"
+             x:Class="LinuxDesktopApp.Views.Example.ControllerView"
+             x:DataType="local:ControllerViewModel"
+             s:DataContextResolver.Type="local:ControllerViewModel"
+             d:DesignWidth="1920" d:DesignHeight="960"
+             Height="960">
+
+    <Grid>
+        <controls:SpeedGauge Margin="0,40,0,-40"
+                             GaugeWidth="32"
+                             Color="Turquoise"
+                             BackgroundColor="#484D5F"
+                             Speed="{Binding Speed}" />
+
+        <TextBlock HorizontalAlignment="Right"
+                   Foreground="White"
+                   FontSize="24"
+                   Text="{Binding Fps, StringFormat={}{0} fps}" />
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="#878A9F"
+                       FontSize="48"
+                       Text="km/h" />
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="White"
+                       FontSize="144"
+                       Text="{Binding Speed}"
+                       FontFamily="{StaticResource Gkktt}" />
+        </StackPanel>
+    </Grid>
+
+</UserControl>

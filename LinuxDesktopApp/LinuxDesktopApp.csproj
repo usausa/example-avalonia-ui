@@ -73,6 +73,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Example\NfcView.axaml.cs">
+      <DependentUpon>NfcView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Example\ControllerView.axaml.cs">
+      <DependentUpon>ControllerView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="version-RFB-320.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
