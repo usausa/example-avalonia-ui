@@ -48,6 +48,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
     <PackageReference Include="Mofucat.SerialIO" Version="1.0.0" />
+    <PackageReference Include="PCSC" Version="7.0.1" />
+    <PackageReference Include="PCSC.Iso7816" Version="7.0.1" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />

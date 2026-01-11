@@ -8,5 +8,5 @@ public enum ViewId
     Camera,
     Printer,
     Controller,
-    Nfc,
+    Nfc
 }
