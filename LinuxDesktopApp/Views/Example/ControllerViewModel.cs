@@ -12,13 +12,6 @@ using LinuxDotNet.GameInput;
 
 public sealed partial class ControllerViewModel : AppViewModelBase
 {
-    private const double AccelVelocity1 = 64d / 60;
-    private const double AccelVelocity2 = 48d / 60;
-    private const double AccelVelocity3 = 32d / 60;
-    private const double AccelVelocity4 = 16d / 60;
-    private const double BrakeVelocity = 96d / 60;
-    private const double DefaultVelocity = 32d / 60;
-
     private static readonly (byte R, byte G, byte B)[] ShiftColors =
     [
         (255, 0, 0),       // Red (Low speed)
@@ -92,123 +85,63 @@ public sealed partial class ControllerViewModel : AppViewModelBase
     {
         try
         {
-            // Low resolution
             var fps = 0;
-            var speed = 0d;
-            var prevSpeed = 0;
-            var prevThrottleAngle = -1;
-            var prevSteeringAngle = -1;
-            var shiftValue = 0;
-
-            var prevAccel = false;
-            var prevBrake = false;
-            var prevShiftDown = false;
-            var prevShiftUp = false;
+            var model = new GameModel();
 
             motor.Open();
             gamepad.Start();
 
             // Set initial
-            var (r, g, b) = ShiftColors[shiftValue];
+            var (r, g, b) = ShiftColors[model.ShiftValue];
             motor.SetLed(r, g, b);
             motor.SetServo(ServoChannel.Servo1, 90);
-            motor.SetServo(ServoChannel.Servo1, 20);
+            motor.SetServo(ServoChannel.Servo2, 20);
 
             var watch = Stopwatch.StartNew();
             while (await timer.WaitForNextTickAsync(cancellationTokenSource.Token).ConfigureAwait(false))
             {
-                // Speed
                 var accel = gamepad.GetButtonPressed(0); // A
                 var brake = gamepad.GetButtonPressed(1); // B
                 var shiftDown = gamepad.GetButtonPressed(2); // X
                 var shiftUp = gamepad.GetButtonPressed(3); // Y
                 var axis = gamepad.GetAxisValue(0);
 
-                if (brake)
-                {
-                    speed = Math.Max(0, speed - BrakeVelocity);
-                }
-                else if (accel)
-                {
-                    var velocity = speed switch
-                    {
-                        < 128 => AccelVelocity1,
-                        < 192 => AccelVelocity2,
-                        < 224 => AccelVelocity3,
-                        _ => AccelVelocity4
-                    };
-                    speed = Math.Min(255, speed + velocity);
-                }
-                else
-                {
-                    speed = Math.Max(0, speed - DefaultVelocity);
-                }
+                model.Update(accel, brake, shiftDown, shiftUp, axis);
 
-                var currentSpeed = (int)speed;
-
-                // Convert speed (0-255) to throttle angle (90-180)
-                var throttleAngle = 90 + (currentSpeed * 90 / 255);
-                // Convert axis (-32768 to 32767) to steering angle (0-180)
-                var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
-
-                // Shift value change
-                var shiftChanged = false;
-                if (shiftDown && !prevShiftDown)
+                if (model.IsUpdated)
                 {
-                    if (shiftValue > 0)
-                    {
-                        shiftValue--;
-                        shiftChanged = true;
-                    }
-                }
-                if (shiftUp && !prevShiftUp)
-                {
-                    if (shiftValue < ShiftColors.Length - 1)
-                    {
-                        shiftValue++;
-                        shiftChanged = true;
-                    }
-                }
+                    var speed = model.Speed;
+                    var angle = model.SteeringAngle;
+                    var accelButton = model.Accel;
+                    var brakeButton = model.Brake;
+                    var shiftDownButton = model.ShiftDown;
+                    var shiftUpButton = model.ShiftUp;
 
-                if ((currentSpeed != prevSpeed) ||
-                    (steeringAngle != prevSteeringAngle) ||
-                    (accel != prevAccel) ||
-                    (brake != prevBrake) ||
-                    (shiftDown != prevShiftDown) ||
-                    (shiftUp != prevShiftUp))
-                {
                     dispatcher.Post(() =>
                     {
-                        Speed = currentSpeed;
-                        Accel = accel;
-                        Brake = brake;
-                        ShiftDown = shiftDown;
-                        ShiftUp = shiftUp;
+                        Speed = speed;
+                        Angle = angle;
+                        Accel = accelButton;
+                        Brake = brakeButton;
+                        ShiftDown = shiftDownButton;
+                        ShiftUp = shiftUpButton;
                     });
 
-                    if (steeringAngle != prevSteeringAngle)
+                    if (model.SteeringChanged)
                     {
-                        motor.SetServo(ServoChannel.Servo1, steeringAngle);
-                        prevSteeringAngle = steeringAngle;
+                        motor.SetServo(ServoChannel.Servo1, model.SteeringAngle);
                     }
 
-                    if (throttleAngle != prevThrottleAngle)
+                    if (model.ThrottleChanged)
                     {
-                        motor.SetServo(ServoChannel.Servo2, throttleAngle);
-                        prevThrottleAngle = throttleAngle;
+                        motor.SetServo(ServoChannel.Servo2, model.ThrottleAngle);
                     }
 
-                    if (shiftChanged)
+                    if (model.ShiftChanged)
                     {
-                        (r, g, b) = ShiftColors[shiftValue];
+                        (r, g, b) = ShiftColors[model.ShiftValue];
                         motor.SetLed(r, g, b);
                     }
-
-                    prevSpeed = currentSpeed;
-                    prevAccel = accel;
-                    prevBrake = brake;
-                    prevShiftDown = shiftDown;
-                    prevShiftUp = shiftUp;
                 }
 
                 // FPS
@@ -231,8 +164,135 @@ public sealed partial class ControllerViewModel : AppViewModelBase
         {
             motor.SetLed(0, 0, 0);
             motor.SetServo(ServoChannel.Servo1, 90);
-            motor.SetServo(ServoChannel.Servo1, 20);
+            motor.SetServo(ServoChannel.Servo2, 20);
             motor.Close();
+        }
+    }
+
+    private sealed class GameModel
+    {
+        private const double AccelVelocity1 = 64d / 60;
+        private const double AccelVelocity2 = 48d / 60;
+        private const double AccelVelocity3 = 32d / 60;
+        private const double AccelVelocity4 = 16d / 60;
+        private const double BrakeVelocity = 96d / 60;
+        private const double DefaultVelocity = 32d / 60;
+
+        private double speed;
+        private int prevSpeed;
+        private int prevThrottleAngle = -1;
+        private int prevSteeringAngle = -1;
+
+        private bool prevAccel;
+        private bool prevBrake;
+        private bool prevShiftDown;
+        private bool prevShiftUp;
+
+        public int Speed { get; private set; }
+        public int ThrottleAngle { get; private set; }
+        public int SteeringAngle { get; private set; }
+        public int ShiftValue { get; private set; }
+
+        public bool Accel { get; private set; }
+        public bool Brake { get; private set; }
+        public bool ShiftDown { get; private set; }
+        public bool ShiftUp { get; private set; }
+
+        public bool IsUpdated { get; private set; }
+        public bool SteeringChanged { get; private set; }
+        public bool ThrottleChanged { get; private set; }
+        public bool ShiftChanged { get; private set; }
+
+        public void Update(bool accel, bool brake, bool shiftDown, bool shiftUp, short axis)
+        {
+            // Reset flags
+            IsUpdated = false;
+            SteeringChanged = false;
+            ThrottleChanged = false;
+            ShiftChanged = false;
+
+            // Update speed
+            if (brake)
+            {
+                speed = Math.Max(0, speed - BrakeVelocity);
+            }
+            else if (accel)
+            {
+                var velocity = speed switch
+                {
+                    < 128 => AccelVelocity1,
+                    < 192 => AccelVelocity2,
+                    < 224 => AccelVelocity3,
+                    _ => AccelVelocity4
+                };
+                speed = Math.Min(255, speed + velocity);
+            }
+            else
+            {
+                speed = Math.Max(0, speed - DefaultVelocity);
+            }
+
+            var currentSpeed = (int)speed;
+
+            // Convert speed (0-255) to throttle angle (90-180)
+            var throttleAngle = 90 + (currentSpeed * 90 / 255);
+            // Convert axis (-32768 to 32767) to steering angle (0-180)
+            var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
+
+            // Shift value change
+            if (shiftDown && !prevShiftDown)
+            {
+                if (ShiftValue > 0)
+                {
+                    ShiftValue--;
+                    ShiftChanged = true;
+                }
+            }
+            if (shiftUp && !prevShiftUp)
+            {
+                if (ShiftValue < ShiftColors.Length - 1)
+                {
+                    ShiftValue++;
+                    ShiftChanged = true;
+                }
+            }
+
+            // Check if any property changed
+            if ((currentSpeed != prevSpeed) ||
+                (steeringAngle != prevSteeringAngle) ||
+                (accel != prevAccel) ||
+                (brake != prevBrake) ||
+                (shiftDown != prevShiftDown) ||
+                (shiftUp != prevShiftUp))
+            {
+                IsUpdated = true;
+
+                Speed = currentSpeed;
+                Accel = accel;
+                Brake = brake;
+                ShiftDown = shiftDown;
+                ShiftUp = shiftUp;
+
+                if (steeringAngle != prevSteeringAngle)
+                {
+                    SteeringChanged = true;
+                    SteeringAngle = steeringAngle;
+                    prevSteeringAngle = steeringAngle;
+                }
+
+                if (throttleAngle != prevThrottleAngle)
+                {
+                    ThrottleChanged = true;
+                    ThrottleAngle = throttleAngle;
+                    prevThrottleAngle = throttleAngle;
+                }
+
+                prevSpeed = currentSpeed;
+                prevAccel = accel;
+                prevBrake = brake;
+                prevShiftDown = shiftDown;
+                prevShiftUp = shiftUp;
+            }
         }
     }
 }
