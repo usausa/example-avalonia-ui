@@ -19,6 +19,17 @@ public sealed partial class ControllerViewModel : AppViewModelBase
     private const double BrakeVelocity = 96d / 60;
     private const double DefaultVelocity = 32d / 60;
 
+    private static readonly (byte R, byte G, byte B)[] ShiftColors =
+    [
+        (255, 0, 0),       // Red (Low speed)
+        (255, 128, 0),     // Orange
+        (255, 255, 0),     // Yellow
+        (0, 255, 0),       // Green
+        (0, 255, 255),     // Cyan
+        (0, 0, 255),       // Blue
+        (255, 0, 255)      // Magenta (High speed)
+    ];
+
     private readonly IDispatcher dispatcher;
 
     private readonly GameController gamepad;
@@ -87,11 +98,21 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             var prevSpeed = 0;
             var prevThrottleAngle = -1;
             var prevSteeringAngle = -1;
+            var shiftValue = 0;
+
             var prevAccel = false;
             var prevBrake = false;
+            var prevShiftDown = false;
+            var prevShiftUp = false;
 
             motor.Open();
             gamepad.Start();
+
+            // Set initial
+            var (r, g, b) = ShiftColors[shiftValue];
+            motor.SetLed(r, g, b);
+            motor.SetServo(ServoChannel.Servo1, 90);
+            motor.SetServo(ServoChannel.Servo1, 20);
 
             var watch = Stopwatch.StartNew();
             while (await timer.WaitForNextTickAsync(cancellationTokenSource.Token).ConfigureAwait(false))
@@ -99,6 +120,8 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                 // Speed
                 var accel = gamepad.GetButtonPressed(0); // A
                 var brake = gamepad.GetButtonPressed(1); // B
+                var shiftDown = gamepad.GetButtonPressed(2); // X
+                var shiftUp = gamepad.GetButtonPressed(3); // Y
                 var axis = gamepad.GetAxisValue(0);
 
                 if (brake)
@@ -128,16 +151,39 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                 // Convert axis (-32768 to 32767) to steering angle (0-180)
                 var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
 
+                // Shift value change
+                var shiftChanged = false;
+                if (shiftDown && !prevShiftDown)
+                {
+                    if (shiftValue > 0)
+                    {
+                        shiftValue--;
+                        shiftChanged = true;
+                    }
+                }
+                if (shiftUp && !prevShiftUp)
+                {
+                    if (shiftValue < ShiftColors.Length - 1)
+                    {
+                        shiftValue++;
+                        shiftChanged = true;
+                    }
+                }
+
                 if ((currentSpeed != prevSpeed) ||
                     (steeringAngle != prevSteeringAngle) ||
                     (accel != prevAccel) ||
-                    (brake != prevBrake))
+                    (brake != prevBrake) ||
+                    (shiftDown != prevShiftDown) ||
+                    (shiftUp != prevShiftUp))
                 {
                     dispatcher.Post(() =>
                     {
                         Speed = currentSpeed;
                         Accel = accel;
                         Brake = brake;
+                        ShiftDown = shiftDown;
+                        ShiftUp = shiftUp;
                     });
 
                     if (steeringAngle != prevSteeringAngle)
@@ -152,9 +198,17 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                         prevThrottleAngle = throttleAngle;
                     }
 
+                    if (shiftChanged)
+                    {
+                        (r, g, b) = ShiftColors[shiftValue];
+                        motor.SetLed(r, g, b);
+                    }
+
                     prevSpeed = currentSpeed;
                     prevAccel = accel;
                     prevBrake = brake;
+                    prevShiftDown = shiftDown;
+                    prevShiftUp = shiftUp;
                 }
 
                 // FPS
@@ -175,6 +229,9 @@ public sealed partial class ControllerViewModel : AppViewModelBase
         }
         finally
         {
+            motor.SetLed(0, 0, 0);
+            motor.SetServo(ServoChannel.Servo1, 90);
+            motor.SetServo(ServoChannel.Servo1, 20);
             motor.Close();
         }
     }
