@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 using Avalonia.Threading;
 
+using LinuxDesktopApp.Components.Motor;
+using LinuxDesktopApp.Settings;
 using LinuxDesktopApp.Views;
 
 using LinuxDotNet.GameInput;
@@ -19,7 +21,9 @@ public sealed partial class ControllerViewModel : AppViewModelBase
 
     private readonly IDispatcher dispatcher;
 
-    private readonly GameController controller;
+    private readonly GameController gamepad;
+
+    private readonly MotorController motor;
 
     private readonly PeriodicTimer timer;
     private readonly CancellationTokenSource cancellationTokenSource;
@@ -38,10 +42,12 @@ public sealed partial class ControllerViewModel : AppViewModelBase
 
     public ControllerViewModel(
         IDispatcher dispatcher,
-        GameController controller)
+        MotorSetting motorSetting,
+        GameController gamepad)
     {
         this.dispatcher = dispatcher;
-        this.controller = controller;
+        this.gamepad = gamepad;
+        motor = new MotorController(motorSetting.Port);
 
         timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000d / 60));
         cancellationTokenSource = new CancellationTokenSource();
@@ -58,6 +64,7 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             cancellationTokenSource.Cancel();
             cancellationTokenSource.Dispose();
             timer.Dispose();
+            motor.Dispose();
         }
     }
 
@@ -69,17 +76,20 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             var fps = 0;
             var speed = 0d;
             var prevSpeed = 0;
+            var prevServoAngle = -1;
             var prevAccel = false;
             var prevBrake = false;
 
-            controller.Start();
+            motor.Open();
+            gamepad.Start();
 
             var watch = Stopwatch.StartNew();
             while (await timer.WaitForNextTickAsync(cancellationTokenSource.Token).ConfigureAwait(false))
             {
                 // Speed
-                var accel = controller.GetButtonPressed(0); // A
-                var brake = controller.GetButtonPressed(1); // B
+                var accel = gamepad.GetButtonPressed(0); // A
+                var brake = gamepad.GetButtonPressed(1); // B
+                var axis = gamepad.GetAxisValue(0);
 
                 if (brake)
                 {
@@ -113,6 +123,14 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                         Brake = brake;
                     });
 
+                    // Convert speed (0-255) to servo angle (90-180)
+                    var servoAngle = 90 + (currentSpeed * 90 / 255);
+                    if (servoAngle != prevServoAngle)
+                    {
+                        motor.SetServo(ServoChannel.Servo2, servoAngle);
+                        prevServoAngle = servoAngle;
+                    }
+
                     prevSpeed = currentSpeed;
                     prevAccel = accel;
                     prevBrake = brake;
@@ -133,6 +151,10 @@ public sealed partial class ControllerViewModel : AppViewModelBase
         catch (OperationCanceledException)
         {
             // Ignore
+        }
+        finally
+        {
+            motor.Close();
         }
     }
 }

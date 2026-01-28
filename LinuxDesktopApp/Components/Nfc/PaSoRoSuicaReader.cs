@@ -106,7 +106,6 @@ internal sealed class PaSoRiSuicaReader : IDisposable
             var response = SendCommand(reader, CreateCommand(0xFF, 0xCA, 0x00, 0x00, 0x00));
             if (!response.IsSuccess())
             {
-                Console.WriteLine($"1 {response.SW1:X2} {response.SW2:X2}");
                 return;
             }
 
@@ -116,14 +115,12 @@ internal sealed class PaSoRiSuicaReader : IDisposable
             response = SendCommand(reader, CreateCommand(0xFF, 0xA4, 0x00, 0x01, [0x8B, 0x00]));
             if (!response.IsSuccess())
             {
-                Console.WriteLine($"2 {response.SW1:X2} {response.SW2:X2}");
                 return;
             }
 
             response = SendCommand(reader, CreateCommand(0xFF, 0xB0, 0x00, 0x00, 0x00));
             if (!response.IsSuccess())
             {
-                Console.WriteLine($"3 {response.SW1:X2} {response.SW2:X2}");
                 return;
             }
 
@@ -133,11 +130,8 @@ internal sealed class PaSoRiSuicaReader : IDisposable
             response = SendCommand(reader, CreateCommand(0xFF, 0xA4, 0x00, 0x01, [0x0F, 0x09]));
             if (!response.IsSuccess())
             {
-                Console.WriteLine($"4 {response.SW1:X2} {response.SW2:X2}");
                 return;
             }
-
-            Console.WriteLine($"5 {response.SW1:X2} {response.SW2:X2}");
 
             var records = new List<SuicaHistoryRecord>();
             for (var i = 0; i < 20; i++)
