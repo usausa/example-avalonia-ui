@@ -35,10 +35,19 @@ public sealed partial class ControllerViewModel : AppViewModelBase
     public partial int Speed { get; set; }
 
     [ObservableProperty]
+    public partial int Angle { get; set; }
+
+    [ObservableProperty]
     public partial bool Accel { get; set; }
 
     [ObservableProperty]
     public partial bool Brake { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShiftDown { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShiftUp { get; set; }
 
     public ControllerViewModel(
         IDispatcher dispatcher,
@@ -120,6 +129,7 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                 var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
 
                 if ((currentSpeed != prevSpeed) ||
+                    (steeringAngle != prevSteeringAngle) ||
                     (accel != prevAccel) ||
                     (brake != prevBrake))
                 {
@@ -130,6 +140,12 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                         Brake = brake;
                     });
 
+                    if (steeringAngle != prevSteeringAngle)
+                    {
+                        motor.SetServo(ServoChannel.Servo1, steeringAngle);
+                        prevSteeringAngle = steeringAngle;
+                    }
+
                     if (throttleAngle != prevThrottleAngle)
                     {
                         motor.SetServo(ServoChannel.Servo2, throttleAngle);
@@ -139,13 +155,6 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                     prevSpeed = currentSpeed;
                     prevAccel = accel;
                     prevBrake = brake;
-                }
-
-                // TODO 変化時のみの処理にする
-                if (steeringAngle != prevSteeringAngle)
-                {
-                    motor.SetServo(ServoChannel.Servo1, steeringAngle);
-                    prevSteeringAngle = steeringAngle;
                 }
 
                 // FPS
