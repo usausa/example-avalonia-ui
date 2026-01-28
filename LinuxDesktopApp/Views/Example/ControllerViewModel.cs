@@ -76,7 +76,8 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             var fps = 0;
             var speed = 0d;
             var prevSpeed = 0;
-            var prevServoAngle = -1;
+            var prevThrottleAngle = -1;
+            var prevSteeringAngle = -1;
             var prevAccel = false;
             var prevBrake = false;
 
@@ -112,6 +113,12 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                 }
 
                 var currentSpeed = (int)speed;
+
+                // Convert speed (0-255) to throttle angle (90-180)
+                var throttleAngle = 90 + (currentSpeed * 90 / 255);
+                // Convert axis (-32768 to 32767) to steering angle (0-180)
+                var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
+
                 if ((currentSpeed != prevSpeed) ||
                     (accel != prevAccel) ||
                     (brake != prevBrake))
@@ -123,17 +130,22 @@ public sealed partial class ControllerViewModel : AppViewModelBase
                         Brake = brake;
                     });
 
-                    // Convert speed (0-255) to servo angle (90-180)
-                    var servoAngle = 90 + (currentSpeed * 90 / 255);
-                    if (servoAngle != prevServoAngle)
+                    if (throttleAngle != prevThrottleAngle)
                     {
-                        motor.SetServo(ServoChannel.Servo2, servoAngle);
-                        prevServoAngle = servoAngle;
+                        motor.SetServo(ServoChannel.Servo2, throttleAngle);
+                        prevThrottleAngle = throttleAngle;
                     }
 
                     prevSpeed = currentSpeed;
                     prevAccel = accel;
                     prevBrake = brake;
+                }
+
+                // TODO 変化時のみの処理にする
+                if (steeringAngle != prevSteeringAngle)
+                {
+                    motor.SetServo(ServoChannel.Servo1, steeringAngle);
+                    prevSteeringAngle = steeringAngle;
                 }
 
                 // FPS
