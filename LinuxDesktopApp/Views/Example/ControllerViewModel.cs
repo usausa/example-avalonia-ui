@@ -171,25 +171,30 @@ public sealed partial class ControllerViewModel : AppViewModelBase
         }
     }
 
+#pragma warning disable CA5394
     private sealed class GameModel
     {
+        private const double BaseAcceleration = 32d / 60;
+        private const double BrakeVelocity = 80d / 60;
+        private const double DefaultVelocity = 48d / 60;
+        private const double OverSpeedDecay = 48d / 60;
+
         // Shift characteristics (max speed for each gear)
-        private static readonly int[] ShiftMaxSpeed = [85, 120, 160, 200, 235, 255];
+        // More distinct speed ranges for each gear
+        private static readonly int[] ShiftMaxSpeed = [70, 110, 150, 190, 230, 255];
 
         // Optimal speed range for each gear (start of power band)
-        private static readonly int[] ShiftOptimalStart = [0, 40, 80, 120, 160, 200];
+        private static readonly int[] ShiftOptimalStart = [0, 30, 70, 110, 150, 190];
 
-        // Peak torque multiplier for each gear
-        private static readonly double[] ShiftTorqueMultiplier = [2.8, 2.2, 1.8, 1.5, 1.2, 1.0];
+        // Peak torque multiplier for each gear (slower acceleration, clearer difference)
+        private static readonly double[] ShiftTorqueMultiplier = [2.5, 1.9, 1.5, 1.25, 1.1, 0.9];
 
         // Speed fluctuation range at redline (±)
         private static readonly int[] ShiftSpeedFluctuation = [3, 3, 4, 4, 5, 5];
 
-        private const double BrakeVelocity = 96d / 60;
-        private const double DefaultVelocity = 32d / 60;
+        private readonly Random random = new();
 
         private double rawSpeed;
-        private readonly Random random = new();
 
         public int ShiftValue { get; private set; }
         public int Speed { get; private set; }
@@ -219,6 +224,16 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             var prevShiftDown = ShiftDown;
             var prevShiftUp = ShiftUp;
 
+            // Update shift value first (before speed calculation)
+            if (shiftDown && !prevShiftDown && (ShiftValue > 0))
+            {
+                ShiftValue--;
+            }
+            if (shiftUp && !prevShiftUp && (ShiftValue < ShiftMaxSpeed.Length - 1))
+            {
+                ShiftValue++;
+            }
+
             // Update speed
             rawSpeed = CalculateSpeed(accel, brake);
             var currentSpeed = (int)rawSpeed;
@@ -228,21 +243,10 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             // Convert axis (-32768 to 32767) to steering angle (0-180)
             var steeringAngle = (int)((axis + 32768) * 180.0 / 65535.0);
 
-            // Update shift value
-            if (shiftDown && !prevShiftDown && ShiftValue > 0)
-            {
-                ShiftValue--;
-            }
-            if (shiftUp && !prevShiftUp && ShiftValue < ShiftColors.Length - 1)
-            {
-                ShiftValue++;
-            }
-
             // Detect changes
             ShiftChanged = ShiftValue != prevShiftValue;
             SteeringChanged = steeringAngle != prevSteeringAngle;
             ThrottleChanged = throttleAngle != prevThrottleAngle;
-
             IsUpdated = (currentSpeed != prevSpeed) ||
                         (steeringAngle != prevSteeringAngle) ||
                         (accel != prevAccel) ||
@@ -262,64 +266,40 @@ public sealed partial class ControllerViewModel : AppViewModelBase
 
         private double CalculateSpeed(bool accel, bool brake)
         {
+            var maxSpeedForGear = ShiftMaxSpeed[ShiftValue];
+            var fluctuation = ShiftSpeedFluctuation[ShiftValue];
+            var effectiveMaxSpeed = maxSpeedForGear + fluctuation;
+
             if (brake)
             {
                 return Math.Max(0, rawSpeed - BrakeVelocity);
             }
+
+            // Check if currently over speed
+            if (rawSpeed > effectiveMaxSpeed)
+            {
+                return Math.Max(0, rawSpeed - OverSpeedDecay);
+            }
+
             if (accel)
             {
-                var velocity = CalculateAccelerationVelocity();
-                var newSpeed = rawSpeed + velocity;
-
-                // Apply redline fluctuation effect
+                var newSpeed = rawSpeed + CalculateAccelerationVelocity();
                 newSpeed = ApplyRedlineFluctuation(newSpeed);
-
                 return Math.Min(255, newSpeed);
             }
+
             return Math.Max(0, rawSpeed - DefaultVelocity);
-        }
-
-        private double ApplyRedlineFluctuation(double speed)
-        {
-            var maxSpeedForGear = ShiftMaxSpeed[ShiftValue];
-            var fluctuation = ShiftSpeedFluctuation[ShiftValue];
-
-            // Check if we're near redline (within 95% of max speed)
-            if (speed < maxSpeedForGear * 0.95)
-            {
-                return speed; // No fluctuation needed
-            }
-
-            // Calculate how close we are to redline (0.0 = far, 1.0 = at redline)
-            var redlineProximity = Math.Min(1.0, (speed - maxSpeedForGear * 0.95) / (maxSpeedForGear * 0.05));
-
-            // Fluctuation intensity increases as we approach redline
-            var fluctuationIntensity = redlineProximity * fluctuation;
-
-            // Add oscillation effect (simulates rev limiter bouncing)
-            var oscillation = (random.NextDouble() - 0.5) * 2 * fluctuationIntensity;
-
-            // Apply speed limit with fluctuation
-            var effectiveMaxSpeed = maxSpeedForGear + fluctuation;
-            var adjustedSpeed = Math.Min(effectiveMaxSpeed, speed + oscillation);
-
-            // Prevent going below a certain threshold when hitting limiter
-            var minSpeedAtLimiter = maxSpeedForGear - fluctuation;
-            return Math.Max(minSpeedAtLimiter, adjustedSpeed);
         }
 
         private double CalculateAccelerationVelocity()
         {
-            // Base acceleration rate (representing engine RPM increase)
-            const double baseAcceleration = 64d / 60;
-
             var currentShift = ShiftValue;
             var maxSpeedForGear = ShiftMaxSpeed[currentShift];
             var optimalStart = ShiftOptimalStart[currentShift];
             var torqueMultiplier = ShiftTorqueMultiplier[currentShift];
             var fluctuation = ShiftSpeedFluctuation[currentShift];
 
-            // Allow slight overspeed due to fluctuation, but reduce acceleration near limit
+            // Allow slight over speed due to fluctuation, but reduce acceleration near limit
             var effectiveMaxSpeed = maxSpeedForGear + fluctuation;
             if (rawSpeed >= effectiveMaxSpeed)
             {
@@ -355,7 +335,7 @@ public sealed partial class ControllerViewModel : AppViewModelBase
 
             // Apply gear-specific torque multiplier
             // Lower gears have higher torque multiplication
-            var effectiveAcceleration = baseAcceleration * torqueMultiplier * torqueCurve;
+            var effectiveAcceleration = BaseAcceleration * torqueMultiplier * torqueCurve;
 
             // Additional penalty if below optimal speed range (lugging the engine)
             if (rawSpeed < optimalStart)
@@ -366,5 +346,42 @@ public sealed partial class ControllerViewModel : AppViewModelBase
 
             return effectiveAcceleration;
         }
+
+        private double ApplyRedlineFluctuation(double speed)
+        {
+            var maxSpeedForGear = ShiftMaxSpeed[ShiftValue];
+            var fluctuation = ShiftSpeedFluctuation[ShiftValue];
+            var effectiveMaxSpeed = maxSpeedForGear + fluctuation;
+
+            // If already over the gear limit (e.g., after downshift), don't apply fluctuation
+            // Let the natural decay in CalculateSpeed handle it
+            if (speed > effectiveMaxSpeed)
+            {
+                return speed;
+            }
+
+            // Check if we're near redline (within 95% of max speed)
+            if (speed < maxSpeedForGear * 0.95)
+            {
+                return speed; // No fluctuation needed
+            }
+
+            // Calculate how close we are to redline (0.0 = far, 1.0 = at redline)
+            var redlineProximity = Math.Min(1.0, (speed - (maxSpeedForGear * 0.95)) / (maxSpeedForGear * 0.05));
+
+            // Fluctuation intensity increases as we approach redline
+            var fluctuationIntensity = redlineProximity * fluctuation;
+
+            // Add oscillation effect (simulates rev limiter bouncing)
+            var oscillation = (random.NextDouble() - 0.5) * 2 * fluctuationIntensity;
+
+            // Apply speed limit with fluctuation
+            var adjustedSpeed = Math.Min(effectiveMaxSpeed, speed + oscillation);
+
+            // Prevent going below a certain threshold when hitting limiter
+            var minSpeedAtLimiter = maxSpeedForGear - fluctuation;
+            return Math.Max(minSpeedAtLimiter, adjustedSpeed);
+        }
     }
+#pragma warning restore CA5394
 }
